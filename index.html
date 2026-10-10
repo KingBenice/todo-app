@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Premium Todo & Notes App</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <i class="fas fa-tasks"></i>
+          <span>TaskFlow</span>
+        </div>
+        <button id="sidebarToggle" class="sidebar-toggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-view="tasks">
+          <i class="fas fa-check-circle"></i>
+          <span>Tasks</span>
+        </button>
+        <button class="nav-item" data-view="notes">
+          <i class="fas fa-sticky-note"></i>
+          <span>Notes</span>
+        </button>
+        <button class="nav-item" data-view="reminders">
+          <i class="fas fa-bell"></i>
+          <span>Reminders</span>
+          <span class="badge" id="reminderBadge">0</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="themeToggle" class="theme-btn" title="Toggle theme">
+          <i class="fas fa-moon"></i>
+        </button>
+        <button id="settingsBtn" class="settings-btn" title="Settings">
+          <i class="fas fa-cog"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Tasks View -->
+      <section id="tasksView" class="view active">
+        <div class="view-header">
+          <h1>My Tasks</h1>
+          <div class="header-actions">
+            <input type="text" id="searchInput" placeholder="Search tasks..." class="search-input" />
+            <button id="newTaskBtn" class="btn btn-primary">
+              <i class="fas fa-plus"></i> New Task
+            </button>
+          </div>
+        </div>
+
+        <!-- Task Form Modal -->
+        <div id="taskModal" class="modal hidden">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2>Create New Task</h2>
+              <button class="modal-close" data-close="taskModal">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <form id="taskForm" class="task-form">
+              <div class="form-group">
+                <label for="taskTitle">Task Title</label>
+                <input type="text" id="taskTitle" placeholder="What needs to be done?" required />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="taskCategory">Category</label>
+                  <select id="taskCategory">
+                    <option value="work">Work</option>
+                    <option value="personal">Personal</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="health">Health</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="taskPriority">Priority</label>
+                  <select id="taskPriority">
+                    <option value="low">Low</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="taskDueDate">Due Date</label>
+                  <input type="date" id="taskDueDate" />
+                </div>
+                <div class="form-group">
+                  <label for="taskDueTime">Time</label>
+                  <input type="time" id="taskDueTime" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="taskDescription">Description</label>
+                <textarea id="taskDescription" placeholder="Add details..."></textarea>
+              </div>
+              <div class="form-group checkbox">
+                <input type="checkbox" id="taskReminder" />
+                <label for="taskReminder">Set Reminder</label>
+              </div>
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary" data-close="taskModal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Create Task</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Task Filters -->
+        <div class="task-filters">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="active">Active</button>
+          <button class="filter-btn" data-filter="completed">Completed</button>
+          <div class="filter-divider"></div>
+          <button class="filter-btn" data-filter="work"><span class="category-dot work"></span>Work</button>
+          <button class="filter-btn" data-filter="personal"><span class="category-dot personal"></span>Personal</button>
+          <button class="filter-btn" data-filter="shopping"><span class="category-dot shopping"></span>Shopping</button>
+          <button class="filter-btn" data-filter="health"><span class="category-dot health"></span>Health</button>
+        </div>
+
+        <!-- Tasks List -->
+        <div class="tasks-container">
+          <div id="tasksList" class="tasks-list"></div>
+          <p id="emptyState" class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <span>No tasks yet. Create one to get started!</span>
+          </p>
+        </div>
+      </section>
+
+      <!-- Notes View -->
+      <section id="notesView" class="view hidden">
+        <div class="view-header">
+          <h1>My Notes</h1>
+          <button id="newNoteBtn" class="btn btn-primary">
+            <i class="fas fa-plus"></i> New Note
+          </button>
+        </div>
+
+        <div id="notesList" class="notes-grid"></div>
+        <p id="notesEmpty" class="empty-state hidden">
+          <i class="fas fa-lightbulb"></i>
+          <span>No notes yet. Scribble your ideas here!</span>
+        </p>
+      </section>
+
+      <!-- Reminders View -->
+      <section id="remindersView" class="view hidden">
+        <div class="view-header">
+          <h1>Reminders</h1>
+          <button id="clearRemindersBtn" class="btn btn-secondary">
+            <i class="fas fa-check-double"></i> Mark All as Read
+          </button>
+        </div>
+
+        <div id="remindersList" class="reminders-list"></div>
+        <p id="remindersEmpty" class="empty-state hidden">
+          <i class="fas fa-bell-slash"></i>
+          <span>No reminders. Your schedule is clear!</span>
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
